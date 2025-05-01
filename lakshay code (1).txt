@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hardware Inventory Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-blue-800 text-white p-4 shadow-md">
+    <div class="container mx-auto">
+      <h1 class="text-2xl font-bold">Hardware Shop Inventory</h1>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md">
+    <div class="container mx-auto flex space-x-4 p-4">
+      <a href="#dashboard" class="text-blue-800 hover:underline">Dashboard</a>
+      <a href="#inventory" class="text-blue-800 hover:underline">Inventory</a>
+      <a href="#suppliers" class="text-blue-800 hover:underline">Suppliers</a>
+      <a href="#sales" class="text-blue-800 hover:underline">Sales</a>
+      <a href="#reports" class="text-blue-800 hover:underline">Reports</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8 px-4">
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Dashboard</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-4 rounded shadow">Total Products: <span id="totalProducts">15</span></div>
+        <div class="bg-white p-4 rounded shadow">Low Stock: <span id="lowStock">3</span></div>
+        <div class="bg-white p-4 rounded shadow">Today Sales: $<span id="todaySales">150.00</span></div>
+      </div>
+    </section>
+
+    <!-- Inventory Management -->
+    <section id="inventory" class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Manage Inventory</h2>
+      <div class="bg-white p-4 rounded shadow">
+        <input type="text" id="searchInput" oninput="filterInventory()" placeholder="Search by name or category..." class="w-full p-2 mb-4 border rounded" />
+        <form id="productForm" class="space-y-4">
+          <input type="text" placeholder="Product Name" class="w-full p-2 border rounded" required />
+          <input type="number" placeholder="Quantity" class="w-full p-2 border rounded" required />
+          <input type="number" placeholder="Price ($)" class="w-full p-2 border rounded" required />
+          <input type="text" placeholder="Category" class="w-full p-2 border rounded" required />
+          <input type="text" placeholder="Brand" class="w-full p-2 border rounded" required />
+          <textarea placeholder="Description" class="w-full p-2 border rounded" required></textarea>
+          <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded">Add Product</button>
+        </form>
+        <div class="mt-6">
+          <h3 class="font-medium mb-2">Inventory List</h3>
+          <ul id="productList" class="space-y-2 text-sm">
+            <li>Hammer - 20 units - $8.99 - Tools - Stanley - Durable claw hammer for general use.</li>
+            <li>Screwdriver Set - 15 units - $12.49 - Tools - Bosch - 6-piece magnetic screwdriver set.</li>
+            <li>Adjustable Wrench - 10 units - $9.99 - Tools - Craftsman - Chrome finish, 10-inch adjustable wrench.</li>
+            <li>PVC Pipe 1" - 50 units - $1.50 - Plumbing - Finolex - High-quality white PVC pipe, 1 inch diameter.</li>
+            <li>Electrical Tape - 100 units - $0.75 - Electrical - 3M - Black insulation tape for electrical safety.</li>
+            <li>LED Bulb 9W - 80 units - $2.50 - Electrical - Philips - Bright energy-saving LED bulb.</li>
+            <li>Paint Brush 2" - 60 units - $1.20 - Painting - Asian Paints - Synthetic bristles for smooth application.</li>
+            <li>Measuring Tape 5m - 25 units - $4.95 - Tools - Stanley - Retractable steel tape with locking feature.</li>
+            <li>Ceiling Fan - 10 units - $32.00 - Electrical - Havells - Energy-efficient with remote control.</li>
+            <li>Cement Bag 50kg - 40 units - $6.75 - Building Materials - Ultratech - Premium quality Portland cement.</li>
+            <li>Wall Plug Set - 200 units - $0.10 - Fasteners - Fischer - Plastic wall plugs for masonry walls.</li>
+            <li>Iron Nails 2" - 500 units - $0.05 - Fasteners - Tata - Galvanized iron nails, rust-resistant.</li>
+            <li>Paint Roller - 30 units - $3.25 - Painting - Dulux - Roller for large wall painting areas.</li>
+            <li>Door Hinge 4" - 40 units - $1.10 - Hardware - Godrej - Stainless steel door hinges.</li>
+            <li>Hand Saw - 12 units - $6.80 - Tools - Dewalt - High-carbon steel blade for wood cutting.</li>
+          </ul>
+        </div>
+        <div class="flex space-x-2 mt-4">
+          <button onclick="printInventory()" class="bg-green-700 text-white px-4 py-2 rounded">Print Inventory</button>
+          <button onclick="exportToExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded">Export to Excel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Suppliers Section -->
+    <section id="suppliers" class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Suppliers</h2>
+      <div class="bg-white p-4 rounded shadow">
+        <button onclick="toggleFAQ('faqSuppliers')" class="text-left w-full text-blue-800 font-medium">What kind of suppliers can I add?</button>
+        <div id="faqSuppliers" class="hidden mt-2 text-gray-600">You can add any supplier that provides hardware tools or materials relevant to your inventory. Include their name, contact details, and products supplied.</div>
+      </div>
+    </section>
+
+    <!-- Sales Section -->
+    <section id="sales" class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Sales</h2>
+      <div class="bg-white p-4 rounded shadow">
+        <button onclick="toggleFAQ('faqSales')" class="text-left w-full text-blue-800 font-medium">How can I record a sale?</button>
+        <div id="faqSales" class="hidden mt-2 text-gray-600">Sales can be recorded manually or integrated via a point-of-sale (POS) system in the future. Keep track of product, quantity, and amount.</div>
+      </div>
+    </section>
+
+    <!-- Reports Section -->
+    <section id="reports">
+      <h2 class="text-xl font-semibold mb-4">Reports</h2>
+      <div class="bg-white p-4 rounded shadow">
+        <button onclick="toggleFAQ('faqReports')" class="text-left w-full text-blue-800 font-medium">What reports are available?</button>
+        <div id="faqReports" class="hidden mt-2 text-gray-600">Planned reports include stock levels, sales summaries, supplier performance, and low inventory alerts.</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Script -->
+  <script>
+    function toggleFAQ(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>
